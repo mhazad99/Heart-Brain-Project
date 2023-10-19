@@ -17,23 +17,25 @@ if flag
         C3list(i, 1) = loadedData.ChannelFlag(9, :);
         O1list(i, 1) = loadedData.ChannelFlag(10, :);
         F3list(i, 1) = loadedData.ChannelFlag(25, :);
-        if C3list(i, 1) == 1
+        if C3list(i, 1) == 1  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% if I want to remove the artifacts from all of the EEG channels simultanously
+            %%%%%%%%%%%%%%%%%%%%%%%%%%% I need to change the conditions of
+            %%%%%%%%%%%%%%%%%%%%%%%%%%% this section!
             C3count = C3count + 1;
-            C3withoutArtifact(C3count, 1) = {loadedData.F(9, :)}; % Store the parts of signal that doesn't have artifact
+            C3withoutArtifact(C3count, 1) = {loadedData.EEG(1, :)}; % Store the parts of signal that doesn't have artifact
         end
         if O1list(i, 1) == 1
             O1count = O1count + 1;
-            O1withoutArtifact(O1count, 1) = {loadedData.F(10, :)};
+            O1withoutArtifact(O1count, 1) = {loadedData.EEG(2, :)};
         end
         if F3list(i, 1) == 1
             F3count = F3count + 1;
-            F3withoutArtifact(F3count, 1) = {loadedData.F(25, :)};
+            F3withoutArtifact(F3count, 1) = {loadedData.EEG(3, :)};
         end
         ST = loadedData.History{3,3,1};
         ST1(i, 1) = str2double(ST(6:10));
     end
     CleanedEEGinfo.CleanedC3 = [C3withoutArtifact{:}];
-    CleanedEEGinfo.CleanedO1 = [O1withoutArtifact{:}]; % Concatinate the cleaned segments of the signals
+    CleanedEEGinfo.CleanedO1 = [O1withoutArtifact{:}]; % Concatenate the cleaned segments of the signals
     CleanedEEGinfo.CleanedF3 = [F3withoutArtifact{:}];
     %artifactcount = sum(F3list == -1); % Counts the number of epochs that has artifact
     CleanedEEGinfo.C3artifactidx = find(C3list == -1);
@@ -56,31 +58,31 @@ else
         F3list(i, 1) = loadedData.ChannelFlag(25, :);
         if C3list(i, 1) == 1 && y(1, i) == 4
             REMC3count = REMC3count + 1;
-            REMC3withoutArtifact(REMC3count, 1) = {loadedData.F(9, :)}; % Store the parts of signal that doesn't have artifact
+            REMC3withoutArtifact(REMC3count, 1) = {loadedData.EEG(1, :)}; % Store the parts of signal that doesn't have artifact
         elseif C3list(i, 1) == 1 && (y(1, i) == 3 || y(1, i) == 2 || y(1, i) == 1)
             NREMC3count = NREMC3count + 1;
-            NREMC3withoutArtifact(NREMC3count, 1) = {loadedData.F(9, :)}; % Store the parts of signal that doesn't have artifact
+            NREMC3withoutArtifact(NREMC3count, 1) = {loadedData.EEG(1, :)}; % Store the parts of signal that doesn't have artifact
         end
         if O1list(i, 1) == 1 && y(1, i) == 4
             REMO1count = REMO1count + 1;
-            REMO1withoutArtifact(REMO1count, 1) = {loadedData.F(10, :)};
+            REMO1withoutArtifact(REMO1count, 1) = {loadedData.EEG(2, :)};
         elseif O1list(i, 1) == 1 && (y(1, i) == 3 || y(1, i) == 2 || y(1, i) == 1)
             NREMO1count = NREMO1count + 1;
-            NREMO1withoutArtifact(NREMO1count, 1) = {loadedData.F(10, :)};
+            NREMO1withoutArtifact(NREMO1count, 1) = {loadedData.EEG(2, :)};
         end
         if F3list(i, 1) == 1 && y(1, i) == 4
             REMF3count = REMF3count + 1;
-            REMF3withoutArtifact(REMF3count, 1) = {loadedData.F(25, :)};
+            REMF3withoutArtifact(REMF3count, 1) = {loadedData.EEG(3, :)};
         elseif F3list(i, 1) == 1 && (y(1, i) == 3 || y(1, i) == 2 || y(1, i) == 1)
             NREMF3count = NREMF3count + 1;
-            NREMF3withoutArtifact(NREMF3count, 1) = {loadedData.F(25, :)};
+            NREMF3withoutArtifact(NREMF3count, 1) = {loadedData.EEG(3, :)};
         end
         ST = loadedData.History{3,3,1};
         ST1(i, 1) = str2double(ST(6:10));
     end
     CleanedEEGinfo.CleanedC3REM = [REMC3withoutArtifact{:}];
     CleanedEEGinfo.CleanedC3NREM = [NREMC3withoutArtifact{:}];
-    CleanedEEGinfo.CleanedO1REM = [REMO1withoutArtifact{:}]; % Concatinate the cleaned segments of the signals
+    CleanedEEGinfo.CleanedO1REM = [REMO1withoutArtifact{:}]; % Concatenate the cleaned segments of the signals
     CleanedEEGinfo.CleanedO1NREM = [NREMO1withoutArtifact{:}];
     CleanedEEGinfo.CleanedF3REM = [REMF3withoutArtifact{:}];
     CleanedEEGinfo.CleanedF3NREM = [NREMF3withoutArtifact{:}];

@@ -12,7 +12,7 @@ tdistpdf = tpdf(k,nu1);
 tval = statsb1.tstat;
 tvalpdf = tpdf(tval,nu1);
 tcrit = tinv(0.99,nu1);
-figure
+figure('Position',[200, 200, 600, 400])
 subplot(4,2,1)
 plot(k,tdistpdf)
 hold on
@@ -20,7 +20,7 @@ scatter(tval,tvalpdf,"filled")
 xline(tcrit,"--")
 xline(-tcrit,"--")
 legend(["Student's t pdf", "t-Statistic", "Critical Cutoff"])
-title('T-test resutls for the cluster considering first min(0-8Hz & confidence level of 0.99)')
+title('First cluster')
 %if flag == false
 %% second cluster
 [hb2,pb2,ci2,statsb2] = ttest(MaximumInClusterboot(:, 1), MaximumInCluster(2), 'Alpha',0.01);
@@ -41,7 +41,7 @@ scatter(tval,tvalpdf,"filled")
 xline(tcrit,"--")
 xline(-tcrit,"--")
 legend(["Student's t pdf", "t-Statistic", "Critical Cutoff"])
-title('T-test resutls for the cluster considering second min(0-8Hz & confidence level of 0.99)')
+title('Second cluster')
 %% third cluster
 [hb3,pb3,ci3,statsb3] = ttest(MaximumInClusterboot(:, 1), MaximumInCluster(3), 'Alpha',0.01);
 outputs.ci3 = ci3;
@@ -61,7 +61,7 @@ scatter(tval,tvalpdf,"filled")
 xline(tcrit,"--")
 xline(-tcrit,"--")
 legend(["Student's t pdf", "t-Statistic", "Critical Cutoff"])
-title('T-test resutls for the cluster considering third min(0-8Hz & confidence level of 0.99)')
+title('Third cluster')
 %% fourth cluster
 [hb4,pb4,ci4,statsb4] = ttest(MaximumInClusterboot(:, 1), MaximumInCluster(4), 'Alpha',0.01);
 outputs.ci4 = ci4;
@@ -81,7 +81,7 @@ scatter(tval,tvalpdf,"filled")
 xline(tcrit,"--")
 xline(-tcrit,"--")
 legend(["Student's t pdf", "t-Statistic", "Critical Cutoff"])
-title('T-test resutls for the cluster considering fourth min(0-8Hz & confidence level of 0.99)')
+title('Fourth cluster')
 %% fifth cluster
 [hb5,pb5,ci5,statsb5] = ttest(MaximumInClusterboot(:, 1), MaximumInCluster(5), 'Alpha',0.01);
 outputs.ci5 = ci5;
@@ -101,7 +101,8 @@ scatter(tval,tvalpdf,"filled")
 xline(tcrit,"--")
 xline(-tcrit,"--")
 legend(["Student's t pdf", "t-Statistic", "Critical Cutoff"])
-title('T-test resutls for the cluster considering fifth min(0-8Hz & confidence level of 0.99)')
+title('Fifth cluster')
+
 %% sixth cluster
 [hb6,pb6,ci6,statsb6] = ttest(MaximumInClusterboot(:, 1), MaximumInCluster(6), 'Alpha',0.01);
 outputs.ci6 = ci6;
@@ -121,8 +122,19 @@ scatter(tval,tvalpdf,"filled")
 xline(tcrit,"--")
 xline(-tcrit,"--")
 legend(["Student's t pdf", "t-Statistic", "Critical Cutoff"])
-title('T-test resutls for the cluster considering sixth min(0-8Hz & confidence level of 0.99)')
+title('Sixth cluster')
 
+%% bar plot
+pvals = [pb1, pb2, pb3, pb4, pb5, pb6];
+figure;
+bar(pvals)
+xticklabels({'Cluster 1', 'Cluster 2', 'Cluster 3', 'Cluster 4', 'Cluster 5', 'Cluster 6'})
+title('Statistical Significance of t-Test Results')
+xlabel('Comparison Groups')
+ylabel('p-Value')
+hold on
+yline(0.01, 'r--', 'Significance Threshold (alpha = 0.01)')
+legend('p-Value', 'Location', 'NorthEast')
 %% seventh cluster
 [hb7,pb7,ci7,statsb7] = ttest(MaximumInClusterboot(:, 1), MaximumInCluster(7), 'Alpha',0.01);
 outputs.ci7 = ci7;

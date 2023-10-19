@@ -84,7 +84,7 @@ if flag
     %     MaximumInCluster(6) = maxcluster;
     %     Maxindex(6) = maxindex;
 
-    figure
+    figure('Position',[200, 200, 600, 400])
     title(['Cluster the difference between Magnitude of coherence of two groups' ...
         ' based on the fixed thresholds'], 'FontSize',15)
     for ploti = 1:length(MaximumInCluster)                                  %%% Change Maximumincluster and minimumincluster for peaks and troughs respectively.
@@ -94,10 +94,11 @@ if flag
         scatter(f_TOT(Maxindex(ploti)), MaximumInCluster(ploti),'filled','MarkerFaceColor','r') %%% change it for troughs and peaks
         yline(0.005, LineWidth=2)                                           % Threshold to fix the number of cluster frequencies
         xline(8, LineWidth=1)
-        legend('Difference between magnitude of coherence of two groups', 'Maximum in cluster')
+        legend('Difference between magnitude of coherence of two groups', 'Maximum in cluster', 'fontsize', 12)
         grid on
-        xlabel('frequency (Hz)','FontSize',15)
+        xlabel('frequency (Hz)','FontSize',8)
         linkaxes(ax,'x');
+        xlim(ax, [0, 9])
         zoom on
     end
 
@@ -172,6 +173,7 @@ if flag
     %     end
     Clusteroutputs.MaximumInClusterboot = MaximumInClusterboot(:, 1);
     Clusteroutputs.AvgMaximumInClusterboot = mean(MaximumInClusterboot(:, 1));
+    figure('Position',[200, 200, 600, 400])
     histfit(MaximumInClusterboot(:, 1))
     title('Maximum values of the cluster for 1000 times bootstrapping');
     xlabel("Maximum value")

@@ -4,6 +4,7 @@ close all
 
 %% Load signals and Initials
 % Specify the folder path where your .mat files are located
+addpath('C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\EEG Artifact Removal Pipeline\Hassan_preprocessing\')
 addpath('C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\EEG Artifact Removal Pipeline\Hassan_preprocessing\PREP_BS\')
 addpath('C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\EEG Artifact Removal Pipeline\Hassan_preprocessing\PREP_BS_2\')
 addpath('C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\EEG Artifact Removal Pipeline\Hassan_preprocessing\RL2BV_V5\')
