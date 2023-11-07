@@ -1,0 +1,53 @@
+{
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.11.6",
+    "heartbeatAt": "2023-11-07T17:06:53.481532",
+    "startedAt": "2023-11-07T17:06:52.503674",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "C:\\Users\\AS79560\\OneDrive - ETS\\Thesis\\Datasets\\PythonCode\\ClassificationWithCoherences.py",
+    "codePathLocal": "ClassificationWithCoherences.py",
+    "codePath": "ClassificationWithCoherences.py",
+    "git": {
+        "remote": "https://github.com/mhazad99/Heart-Brain-project.git",
+        "commit": "805b2aeee82cc2786acb03542e2fbf671cca46f5"
+    },
+    "email": null,
+    "root": "C:/Users/AS79560/OneDrive - ETS/Thesis/Datasets/PythonCode",
+    "host": "LIVIA052778",
+    "username": "AS79560",
+    "executable": "C:\\Users\\AS79560\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+    "cpu_count": 12,
+    "cpu_count_logical": 20,
+    "cpu_freq": {
+        "current": 2100.0,
+        "min": 0.0,
+        "max": 2100.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2100.0,
+            "min": 0.0,
+            "max": 2100.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 493.8913154602051,
+            "used": 380.6549606323242
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3060",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3060",
+            "memory_total": 12884901888
+        }
+    ],
+    "memory": {
+        "total": 31.696025848388672
+    }
+}

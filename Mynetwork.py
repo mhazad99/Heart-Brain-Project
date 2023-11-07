@@ -8,7 +8,8 @@ import numpy as np
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import Subset
-from torchsummary import summary
+#from torchsummary import summary
+import matplotlib.pyplot as plt
 
 from PIL import Image
 import sys
@@ -27,24 +28,24 @@ torch.manual_seed(SEED)
 
 #NOTE Set the path to the image file
 #NOTE: Read the train set
-#data_dir1_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\F3' # PC directory
-data_dir1_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\F3' #Laptop directory
-#data_dir2_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\C3'
-data_dir2_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\C3' #Laptop directory
-#data_dir3_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\O1'
-data_dir3_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\O1' #Laptop directory
-#data_dir4_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\\ECGF3'
-data_dir4_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\ECGF3' #Laptop directory
+data_dir1_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\F3' # PC directory
+#data_dir1_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\F3' #Laptop directory
+data_dir2_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\C3'
+#data_dir2_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\C3' #Laptop directory
+data_dir3_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\O1'
+#data_dir3_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\O1' #Laptop directory
+data_dir4_train = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Train\\ECGF3'
+#data_dir4_train = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\ECGF3' #Laptop directory
 
 #NOTE: Read the test set
-#data_dir1_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\F3' # PC directory
-data_dir1_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\F3' #Laptop directory
-#data_dir2_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\C3'
-data_dir2_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\C3' #Laptop directory
-#data_dir3_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\O1'
-data_dir3_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\O1' #Laptop directory
-#data_dir4_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\ECGF3'
-data_dir4_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\ECGF3' #Laptop directory
+data_dir1_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\F3' # PC directory
+#data_dir1_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\F3' #Laptop directory
+data_dir2_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\C3'
+#data_dir2_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\C3' #Laptop directory
+data_dir3_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\O1'
+#data_dir3_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\O1' #Laptop directory
+data_dir4_test = r'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Spectrograms\Test\ECGF3'
+#data_dir4_test = 'D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\Spectrograms\ECGF3' #Laptop directory
 # Define the transformation to apply to the image
 transform = transforms.Compose([
     #transforms.Resize((224, 224)),  # Resize the image to a specific size
@@ -116,7 +117,7 @@ for item in range(int(100/sequence_length)):
     All_labels.append(torch.tensor(sequence_labels))
     All_images.append(torch.stack(sequence_images))
 test_dataset = TensorDataset(torch.stack(All_images), torch.stack(All_labels))
- 
+
 #print(dataset_tupleslist[0][0].shape)
 '''
 class CustomDataset(Dataset):
@@ -146,6 +147,7 @@ test_dataset = Subset(custom_dataset, range(train_length, dataset_length))'''
 batch_size = 32
 TrainLoader = DataLoader(train_dataset, batch_size = batch_size, shuffle = False)
 TestLoader = DataLoader(test_dataset, batch_size = batch_size, shuffle = False)
+
 
 '''
 for batch_data, batch_label in TrainLoader:
@@ -352,12 +354,4 @@ def evaluate(model, loader):
 
 test_acc = evaluate(model, TestLoader)
 print(f'Test Accuracy: {test_acc:.4f}')
-
-
-
-'''
-lstm_model = LSTM(input_size, hidden_size, num_layers, num_classes)
-res = TrainTest_Model(lstm_model, TrainLoader, TestLoader, n_epoch=n_epoch, learning_rate=0.001, print_epoch=1,
-                              opti='Adam')'''
-
 

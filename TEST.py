@@ -4,6 +4,9 @@ from torchvision.transforms import ToTensor
 from PIL import Image
 import torch.nn.functional as F
 import torch.nn as nn
+import matplotlib.pyplot as plt
+from scipy.io import loadmat
+import numpy as np
 from torchsummary import summary
 
 '''
@@ -75,7 +78,8 @@ print(all_labels)
 # The 'all_stacked_images' tensor will have the shape (num_images, channels, height, width)
 # The 'all_labels' tensor will have the shape (num_images,)
 # You can use these tensors as input to your 3D CNN model
-'''
+
+################################### Check the model summary of a network in pytorch ##################################################################
 
 # Set device
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -180,7 +184,7 @@ summary(model, input_size=(32, 12, 250, 125))
 
 
 class LSTM(nn.Module):
-    '''
+    
     Build the LSTM model applying a RNN over the 7 parallel convnets outputs
 
     param input_image: list of EEG image [batch_size, n_window, n_channel, h, w]
@@ -191,7 +195,7 @@ class LSTM(nn.Module):
     param n_classes: number of classes
     param n_units: number of units
     return x: output of the last layers after the log softmax
-    '''
+    
     def __init__(self, input_image=torch.zeros(1, 7, 3, 32, 32), kernel=(3,3), stride=1, padding=1,max_kernel=(2,2), n_classes=4, n_units=128):
         super(LSTM, self).__init__()
 
@@ -248,4 +252,52 @@ class LSTM(nn.Module):
 model = LSTM().to(device)
 summary(model, input_size=(7, 3, 32, 32))
 
+'''
+'''
+class LSTM1DCNN(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers, num_classes):
+        super(LSTM1DCNN, self).__init__()
+        
+        # 1DCNN layer
+        self.cnn = nn.Sequential(
+            nn.Conv1d(in_channels=input_size, out_channels=16, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2),
+            nn.Conv1d(in_channels=16, out_channels=32, kernel_size=3),
+            nn.ReLU(),
+            nn.MaxPool1d(kernel_size=2)
+        )       
+        # LSTM layer
+        self.lstm = nn.LSTM(input_size=32, hidden_size=hidden_size, batch_first=True, num_layers= num_layers, dropout=0.2)       
+        # Fully connected layer
+        self.fc = nn.Sequential(
+            nn.Linear(hidden_size, 128),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(128, num_classes)
+        )
+        
+    def forward(self, x):
+        x = self.cnn(x)
+        # Reshape for LSTM (batch_size, sequence_length, input_size)
+        x = x.permute(0, 2, 1)
+        #_, (h_n, c_n) = self.lstm(x)
+        # Take the final hidden state (h_n) and pass it through a fully connected layer
+        #out = self.fc(h_n[-1, :, :])
+        return x
+
+input_size = 4  # Number of features in the input
+hidden_size = 64  # Number of hidden units in the LSTM layer
+num_layers = 2  # Number of LSTM layers
+num_classes = 2  # Number of output classes
+num_epochs = 1
+
+model = LSTM1DCNN(input_size, hidden_size, num_layers, num_classes)
+summary(model, input_size=(4, 76800))'''
+
+# Create a tensor with double data type
+double_tensor = torch.tensor([1.0, 2.0, 3.0], dtype=torch.double)
+
+# Check the data type
+print("Data Type:", double_tensor.dtype)
 
