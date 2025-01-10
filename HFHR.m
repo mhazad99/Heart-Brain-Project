@@ -40,7 +40,7 @@ for item = 1:floor((length(FilteredEEG) - 514560)/(fs*30))-5 % (length(EEG) - 51
     end
     windowavg(:, item) = mean(PSDwindow2Storage, 2);
 end
-N1 = length (FilteredEEG);
+N1 = length(FilteredEEG);
 EEGdft = fft(FilteredEEG);
 EEGdft = EEGdft(1:(N1/2)+1);
 PSDEEG = (1/(fs*N1)) * abs(EEGdft).^2;

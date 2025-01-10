@@ -6,7 +6,7 @@ close all
 % To rewrite the text files for EEG artifact removal!
 %% Read and Edit text file
 % Get a list of all .mat files in the folder
-folderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression Cases';
+folderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Insomniacs Cases';
 fileList = dir(fullfile(folderpath, '*.txt'));
 for i = 1:numel(fileList)
     fileName = fileList(i).name; % Get the file name

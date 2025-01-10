@@ -12,12 +12,12 @@ addpath('C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\EEG Artifact Removal Pi
 %TextfileName = "C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression\RET_0002.txt"; %It can be changed to editted version I think
 
 %folderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression Cases'; % Depression cases
-folderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression Cases'; % Control cases
+folderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Insomniacs Cases'; % Control cases
 % My laptop directory:: D:\MASc @ ETS\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression
 
 txtfileList = dir(fullfile(folderpath, '*.txt'));
 edffileList = dir(fullfile(folderpath, '*.edf'));
-flag = 0;
+flag = 1;
 for i = 1:numel(txtfileList) % !!BE CAREFUL ABOUT THE STARTING POINT OF THE LOOP!!
     txtfileName = txtfileList(i).name; % Get the file name
     txtfilePath = fullfile(folderpath, txtfileName); % Get the full file path
@@ -25,12 +25,13 @@ for i = 1:numel(txtfileList) % !!BE CAREFUL ABOUT THE STARTING POINT OF THE LOOP
     edffilePath = fullfile(folderpath, edffileName);
     %%% adding the EEGArtifact removal pipeline
     %%% Comment it when you have done the artifact removal part!
-    %PreProcess_Coppieters_2015_faster(string(txtfileName(1:8)))
+    %PreProcess_Coppieters_2015_faster(string(txtfileName(1:8))) %%%Uncomment it when you want to export brainstorm results
+%end %%% uncomment it when you want to export Brainsotrm results
     subfolderPath = ['C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\Brainstorm\' ...
-        'brainstorm_db\']; % Update with your folder path
+        'brainstorm_db']; % Update with your folder path
     folderPath = fullfile(subfolderPath, txtfileName(1:8),'\data\', txtfileName(1:8), 'NIGHT');
-    [StartTime, EndTime, y, Stageidx] = Hypnogram(txtfilePath);
-    [CleanedEEGinfo] = EEGArtifactRemoval(folderPath, Stageidx, y, flag); % if flag == 1 it won't consider the sleep stages!
+    [StartTime, EndTime, y, Stageidx, FinalLen] = Hypnogram(txtfilePath, folderPath);
+    [CleanedEEGinfo] = EEGArtifactRemoval(folderPath, Stageidx, y, FinalLen, flag); % if flag == 1 it won't consider the sleep stages!
     [rawdata] = ReadDataset(edffilePath, StartTime, EndTime);
     fs = rawdata.fs;
     % Each index in CleanedEEGinfo.(.)artifactidx corresponds to 30 second of
@@ -44,24 +45,29 @@ for i = 1:numel(txtfileList) % !!BE CAREFUL ABOUT THE STARTING POINT OF THE LOOP
     %%%% filter ECG signal before continueing the procedure
     rawdata.ECG1 = ECGFiltering(rawdata.ECG1, fs);
     if flag % if flag == 1 it won't consider the sleep stages for ECG
-        %%% Remove F3 noisy epochs from ECG
-        ECG.ECGF3 = rawdata.ECG1;
-        for item = numel(CleanedEEGinfo.F3artifactidx):-1:1
-            idx = CleanedEEGinfo.F3artifactidx(item);
-            ECG.ECGF3(1+fs*((idx-1)*30):fs*(idx*30)) = [];
+        ECG.ECGCleaned = rawdata.ECG1;
+        for item = numel(CleanedEEGinfo.MergedIndexes):-1:1
+            idx = CleanedEEGinfo.MergedIndexes(item);
+            ECG.ECGCleaned(1+fs*((idx-1)*30):fs*(idx*30)) = [];
         end
-        %%% Remove C3 noisy epochs from ECG
-        ECG.ECGC3 = rawdata.ECG1;
-        for item = numel(CleanedEEGinfo.C3artifactidx):-1:1
-            idx = CleanedEEGinfo.C3artifactidx(item);
-            ECG.ECGC3(1+fs*((idx-1)*30):fs*(idx*30)) = [];
-        end
-        %%% Remove O1 noisy epochs from ECG
-        ECG.ECGO1 = rawdata.ECG1;
-        for item = numel(CleanedEEGinfo.O1artifactidx):-1:1
-            idx = CleanedEEGinfo.O1artifactidx(item);
-            ECG.ECGO1(1+fs*((idx-1)*30):fs*(idx*30)) = [];
-        end
+          %%% Remove F3 noisy epochs from ECG
+%         ECG.ECGF3 = rawdata.ECG1;
+%         for item = numel(CleanedEEGinfo.F3artifactidx):-1:1
+%             idx = CleanedEEGinfo.F3artifactidx(item);
+%             ECG.ECGF3(1+fs*((idx-1)*30):fs*(idx*30)) = [];
+%         end
+%         %%% Remove C3 noisy epochs from ECG
+%         ECG.ECGC3 = rawdata.ECG1;
+%         for item = numel(CleanedEEGinfo.C3artifactidx):-1:1
+%             idx = CleanedEEGinfo.C3artifactidx(item);
+%             ECG.ECGC3(1+fs*((idx-1)*30):fs*(idx*30)) = [];
+%         end
+%         %%% Remove O1 noisy epochs from ECG
+%         ECG.ECGO1 = rawdata.ECG1;
+%         for item = numel(CleanedEEGinfo.O1artifactidx):-1:1
+%             idx = CleanedEEGinfo.O1artifactidx(item);
+%             ECG.ECGO1(1+fs*((idx-1)*30):fs*(idx*30)) = [];
+%         end
         folderName = txtfileName(1:8);
         newFolderPath = fullfile(folderpath, folderName);
         % Use the mkdir function to create the new folder
@@ -144,7 +150,7 @@ for i = 1:numel(txtfileList) % !!BE CAREFUL ABOUT THE STARTING POINT OF THE LOOP
             ECG.ECGO1NREM(1+fs*((idx-1)*30):fs*(idx*30)) = []; % remove artifacts and opposite sleep stages
         end
         folderName = txtfileName(1:8);
-        stagesfolderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Stages Depression Cases'; %%% Change this directory
+        stagesfolderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Insomniacs Cases'; %%% Change this directory
         % for Depression and Control cases!
         newFolderPath = fullfile(stagesfolderpath, folderName);
         % Use the mkdir function to create the new folder

@@ -6,13 +6,13 @@ close all
 load f_TOT.mat
 fs = 256;
 %% load Coherences
-Depressionfolderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\CPSDCoherences\DepressionCoherencesF3';
+Depressionfolderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\CPSDCoherences\Insomniac Cases\CoherencesF3';
 DepressionfileList = dir(fullfile(Depressionfolderpath, '*.mat'));
 Controlfolderpath = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\CPSDCoherences\ControlCoherencesF3';
 ControlfileList = dir(fullfile(Controlfolderpath, '*.mat'));
 %% read files
 MCCont = [];MCDep = [];PCCont = [];PCDep = [];
-for i = 1:numel(ControlfileList)
+for i = 1:numel(DepressionfileList)
     ControlFileName = ControlfileList(i).name; % Get the file name
     ControlfilePath = fullfile(Controlfolderpath, ControlFileName); % Get the full file path
     CMatfile = load(ControlfilePath);
@@ -72,19 +72,19 @@ for item = 1:length(MCCont)
     p_Storage_Mag(item, :) = p1;
     STDstorage_Mag(item, :) = stats1.sd;
     %DFstorage_Mag(item, :) = stats1.df;
-    [h2,p2,~,stats2] = ttest2(PCDep(item, :), PCCont(item, :), 'Vartype','unequal','Alpha',0.05);
-    h_Storage_Phase(item, :) = h2;
-    p_Storage_Phase(item, :) = p2;
-    STDstorage_Phase(item, :) = stats2.sd;
-    %DFstorage_Phase(item, :) = stats2.df;
+%     [h2,p2,~,stats2] = ttest2(PCDep(item, :), PCCont(item, :), 'Vartype','unequal','Alpha',0.05);
+%     h_Storage_Phase(item, :) = h2;
+%     p_Storage_Phase(item, :) = p2;
+%     STDstorage_Phase(item, :) = stats2.sd;
+%     %DFstorage_Phase(item, :) = stats2.df;
 end
 for item = 1:length(p_Storage_Mag)
     if p_Storage_Mag(item)>0.05
         p_Storage_Mag(item) = 0.05;
     end
-    if p_Storage_Phase(item)>0.05
-        p_Storage_Phase(item) = 0.05;
-    end
+%     if p_Storage_Phase(item)>0.05
+%         p_Storage_Phase(item) = 0.05;
+%     end
 end
 ax(3) = subplot(3,1,3);
 plot(f_TOT, p_Storage_Mag, 'k','LineWidth',1)
@@ -113,38 +113,38 @@ zoom on
 %                             (STDstorage_Phase(item,2)^2/size(PCDep,2)));
 % end
 %% Area plots for phase
-figure
-az(1) = subplot(3,1,1);
-area(f_TOT,Average_PDep+STD_PDep,'FaceColor',[0.8 0.8 1],'BaseValue',-4)
-hold on
-area(f_TOT,Average_PDep-STD_PDep,'FaceColor','w','BaseValue',-4)
-hold on
-plot(f_TOT,Average_PDep,'b','LineWidth',2)
-%grid on
-title('Average Phase Coherence of Depression Cases')
-legend('STD of Average Phase Coherence of Depression Cases','Fontsize', 12)
-az(2) = subplot(3,1,2);
-area(f_TOT,Average_PCont+STD_PCont,'FaceColor',[1 0.8 0.8],'BaseValue',-4)
-hold on
-area(f_TOT,Average_PCont-STD_PCont,'FaceColor','w','BaseValue',-4)
-hold on
-plot(f_TOT,Average_PCont,'r','LineWidth',2)
-%grid on
-title('Average Phase Coherence of Control Cases')
-legend('STD of Average Phase Coherence of Control Cases','Fontsize', 12)
-az(3) = subplot(3,1,3);
-plot(f_TOT, p_Storage_Phase,'k')
-grid on
-legend('pvalue', 'Fontsize', 12,'Location','Best')
-xlabel('frequency (Hz)','FontSize',20)
-%%% Standard error of mean plot
-% az(4) = subplot(4,1,4);
-% plot(f_TOT, SEM_Phase, 'r', 'LineWidth',1)
-% legend('Standard Error of Mean', 'Fontsize', 12)
-% xlabel('frequency (Hz)','FontSize',20)
+% figure
+% az(1) = subplot(3,1,1);
+% area(f_TOT,Average_PDep+STD_PDep,'FaceColor',[0.8 0.8 1],'BaseValue',-4)
+% hold on
+% area(f_TOT,Average_PDep-STD_PDep,'FaceColor','w','BaseValue',-4)
+% hold on
+% plot(f_TOT,Average_PDep,'b','LineWidth',2)
+% %grid on
+% title('Average Phase Coherence of Depression Cases')
+% legend('STD of Average Phase Coherence of Depression Cases','Fontsize', 12)
+% az(2) = subplot(3,1,2);
+% area(f_TOT,Average_PCont+STD_PCont,'FaceColor',[1 0.8 0.8],'BaseValue',-4)
+% hold on
+% area(f_TOT,Average_PCont-STD_PCont,'FaceColor','w','BaseValue',-4)
+% hold on
+% plot(f_TOT,Average_PCont,'r','LineWidth',2)
+% %grid on
+% title('Average Phase Coherence of Control Cases')
+% legend('STD of Average Phase Coherence of Control Cases','Fontsize', 12)
+% az(3) = subplot(3,1,3);
+% plot(f_TOT, p_Storage_Phase,'k')
 % grid on
-linkaxes(az,'x');
-zoom on
+% legend('pvalue', 'Fontsize', 12,'Location','Best')
+% xlabel('frequency (Hz)','FontSize',20)
+% %%% Standard error of mean plot
+% % az(4) = subplot(4,1,4);
+% % plot(f_TOT, SEM_Phase, 'r', 'LineWidth',1)
+% % legend('Standard Error of Mean', 'Fontsize', 12)
+% % xlabel('frequency (Hz)','FontSize',20)
+% % grid on
+% linkaxes(az,'x');
+% zoom on
 %% Clustering the frequencies
 [Magoutputs] = ClusterFreq(f_TOT, Average_CDep, Average_CCont, MCCont, MCDep, true);
 disp(Magoutputs)

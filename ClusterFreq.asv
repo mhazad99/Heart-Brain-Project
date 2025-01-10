@@ -7,19 +7,15 @@ if flag
     window_size = 10;
     Diff = movmean(Diff, window_size);
     %%% Saving the Diffs in another path
-    Path = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\CPSDCoherences\Insomniac Cases\AvgCoherences';
-    F3AvgCon = AverageCont;
-    F3AvgDep = AverageDep;
-    fileName1 = 'F3AvgCon.mat';
+    Path = 'C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\CPSDCoherences\SleepStagesBased\Sleep stages Avg Coherences';
+    O1NREMAvgCon = AverageCont;
+    O1NREMAvgDep = AverageDep;
+    fileName1 = 'O1NREMAvgCon.mat';
     fullFilePath1 = fullfile(Path, fileName1);
-    fileName2 = 'F3AvgDep.mat';
+    fileName2 = 'O1NREMAvgDep.mat';
     fullFilePath2 = fullfile(Path, fileName2);
-    F3Diff = Diff;
-    fileName3 = 'F3Diff.mat';
-    fullFilePath3 = fullfile(Path, fileName3);
-    save(fullFilePath1, 'F3AvgCon')
-    save(fullFilePath2, 'F3AvgDep')
-    save(fullFilePath3, "F3Diff")
+    save(fullFilePath1, 'O1NREMAvgCon')
+    save(fullFilePath2, 'O1NREMAvgDep')
     %%%
     %Diff = abs(Diff);
     flagg = true; % If you want to find the peaks (true), otherwise: false
@@ -88,7 +84,7 @@ if flag
     %     MaximumInCluster(6) = maxcluster;
     %     Maxindex(6) = maxindex;
 
-    figure('Position',[200, 200, 600, 400])
+    figure
     title(['Cluster the difference between Magnitude of coherence of two groups' ...
         ' based on the fixed thresholds'], 'FontSize',15)
     for ploti = 1:length(MaximumInCluster)                                  %%% Change Maximumincluster and minimumincluster for peaks and troughs respectively.
@@ -98,11 +94,10 @@ if flag
         scatter(f_TOT(Maxindex(ploti)), MaximumInCluster(ploti),'filled','MarkerFaceColor','r') %%% change it for troughs and peaks
         yline(0.005, LineWidth=2)                                           % Threshold to fix the number of cluster frequencies
         xline(8, LineWidth=1)
-        legend('Difference between magnitude of coherence of two groups', 'Maximum in cluster', 'fontsize', 12)
+        legend('Difference between magnitude of coherence of two groups', 'Maximum in cluster')
         grid on
-        xlabel('frequency (Hz)','FontSize',8)
+        xlabel('frequency (Hz)','FontSize',15)
         linkaxes(ax,'x');
-        xlim(ax, [0, 9])
         zoom on
     end
 

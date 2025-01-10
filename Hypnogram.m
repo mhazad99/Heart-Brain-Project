@@ -1,4 +1,4 @@
-function [StartTime, EndTime, y, idx] = Hypnogram(TextfileName)
+function [StartTime, EndTime, y, idx, FinalLen] = Hypnogram(TextfileName, folderPath)
 
 %Uncomment it when you want to work with control cases!
 %T = readtable(TextfileName,'VariableNamingRule','preserve', 'HeaderLines',13);
@@ -37,7 +37,18 @@ for item = 1: numRows % counting the number of each sleep stage for hypnogram ge
     i = i + 1;
 end
 
-y = y(1:end-1); % Removing the last epoch to syncronize the data with the timing.
+%y = y(1:end-1); % Removing the last epoch to syncronize the data with the timing.
+
+fileList = dir(fullfile(folderPath, '*.mat'));
+len = numel(fileList) - 2;
+FinalLen = 0;
+if len > length(y)
+    FinalLen = length(y);
+else
+    FinalLen = len;
+end
+
+y = y(1:FinalLen);
 
 idx.NREM3idx = find(y == 3);
 idx.NREM2idx = find(y == 2);
@@ -45,10 +56,9 @@ idx.NREM1idx = find(y == 1);
 idx.REMidx = find(y == 4);
 idx.Wake = find(y == 5);
 
-
 % x = [];
 % j = 0;
-% 
+%
 % for item2 = 1: numRows % This loop will remove outliers from the array
 %     if y(item2) == 0
 %         continue
@@ -57,7 +67,7 @@ idx.Wake = find(y == 5);
 %         x(j) = y(item2);
 %     end
 % end
-% 
+%
 
 % Adjust_num = T.Epoch(find(T.Event(:) == "Wake", 1, 'first')) - 1; %finds the first epoch that the Wake stage happend.
 % % 68 should be changed based on each subject! 68 = first wake epoch - 1 =
