@@ -1,0 +1,113 @@
+clc
+clear
+close all
+tic
+%% Load signals and Initials
+Filelocation = "C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression\RET_0002.edf";
+TextfileName = "C:\Users\AS79560\OneDrive - ETS\Thesis\Datasets\M-Hassan\Depression\RET_0002.txt";
+[rawdata] = ReadDataset(Filelocation);
+[newy, Adjust_num] = Hypnogram(TextfileName);
+fs = rawdata.fs;
+%% Things need to be changed based on subjects
+PostWakeNum = 25;
+CleanedTime = 4980*5;
+load Res.mat
+%% Refrencing ECG & EEG
+%ECG = ECG1 - ECG2; %This referencing does not good results
+EEG = rawdata.F3 - ((rawdata.M1 + rawdata.M2)/2);
+% SleepEEG and SleepECG are the signals with removed pre-post wake signals
+%% EEG filtering and artifact removal
+FilteredEEG = EEGFiltering(EEG, fs, Adjust_num, PostWakeNum);
+%% ECG filtering and artifact removal
+FilteredECG = ECGFiltering(rawdata.ECG1, fs, Adjust_num, PostWakeNum);
+%% Computing HR from ECG
+% RRI = Res.RRs;
+% HR = 60./RRI;
+% DownsampleHR = resample(HR, CleanedTime, length(RRI));
+
+%% Computing PSD of ... band
+bounderies = [0.5, 4, 8, 12, 16, 3.5, 7.5, 11.5, 15.5, 19.5];
+for iter = 1:length(bounderies)/2
+    f1 = bounderies(iter); 
+    f2 = bounderies(iter+length(bounderies)/2);                   
+    Wn = [f1 f2]*2/fs;                                                     
+    N = 3;                                                                   
+    [a,b] = butter(N,Wn);                                                     
+    FreqBand = filtfilt(a,b,FilteredEEG);
+    for item = 1:CleanedTime/30
+        window = FreqBand(1+((item-1)*256*30):item*256*30);
+        % Calculate Hilbert Transform to find the power time series for each window
+        Hilbertfun = hilbert(window);
+        WindowPower = abs(Hilbertfun).^2;
+        N1 = length(WindowPower);
+        DTFT = fft(WindowPower);
+        DTFT = DTFT(1:(N1/2)+1);
+        DTFT = abs(DTFT);
+        freq = 0:fs/N1:fs/2;
+        Dfreq = max(DTFT(2:end));
+        idx = find(DTFT == Dfreq);
+        freqval = freq(idx);
+        freqvalstorage(item) = freqval;
+        %         figure
+        %         plot(freq, DTFT)
+        %         figure
+        %         loglog(freq, 10*log10(abs(DTFT)))
+        % Calculating the phase of the power time series
+        SecondHilbert = hilbert(WindowPower);
+        rand_shift = randi(length(angle(SecondHilbert)));
+        ShiftedPhase = circshift(angle(SecondHilbert, rand_shift);
+        WindowPhaseStorage(:, item) = angle(SecondHilbert);
+        % plot(WindowPhase)
+    end
+    for item = 1: CleanedTime/30
+        Filter1 = designfilt('bandpassiir', 'FilterOrder', 6,...
+            'HalfPowerFrequency1', freqvalstorage(item)-freqvalstorage(item)/2, ...
+            'HalfPowerFrequency2', freqvalstorage(item)+freqvalstorage(item)/2,'SampleRate', 256);
+        ECGLowfreq = filtfilt(Filter1, FilteredECG);
+        for item2 = 1:CleanedTime/30
+            ECGHilbert = hilbert(ECGLowfreq(1+((item2-1)*256*30):item2*256*30));
+            LowerECGPhaseStorage(:, item2) = angle(ECGHilbert);
+        end
+    end
+    N = CleanedTime/30;
+    for Numberofepochs = 1:N
+        SIValue = 0;
+        n = length(SecondHilbert);
+        for item2 = 1:n
+            SIValue = SIValue + exp(1i*(LowerECGPhaseStorage(item2,Numberofepochs) ...
+                - WindowPhaseStorage(item2,Numberofepochs)));
+        end
+        SI = SIValue/n;
+        SIm = abs(SI);
+        SIp = atan(imag(SI)/real(SI));
+        SImStorage(iter, Numberofepochs) = SIm;
+        SIpStorage(iter, Numberofepochs) = SIp;
+        SI = 0;
+    end
+end
+toc
+figure
+x = [1 N];
+y = [1 5];
+imagesc(SImStorage)
+colorbar
+labels = {'Delta','Theta', 'Alpha', 'Sigma', 'Beta'};
+yticks(1:5)
+yticklabels(labels)
+xlabel('Epochs','FontSize',12)
+ylabel('EEG Frequency Bands','FontSize',12)
+cb = colorbar;
+cb.Title.String = 'Magnitude of SI';
+figure
+x = [1 N];
+y = [1 5];
+imagesc(SIpStorage)
+colorbar
+labels = {'Delta','Theta', 'Alpha', 'Sigma', 'Beta'};
+yticks(1:5)
+yticklabels(labels)
+xlabel('Epochs','FontSize',12)
+ylabel('EEG Frequency Bands','FontSize',12)
+cb = colorbar;
+cb.Title.String = 'Phase of SI';
+cb.Limits = [-pi/2, pi/2];

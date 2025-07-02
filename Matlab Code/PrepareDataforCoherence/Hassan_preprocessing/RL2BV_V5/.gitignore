@@ -1,0 +1,9 @@
+*.asv
+~*
+vhdr_input_files
+eeglab*
+mffmatlabio*
+*log.txt
+*.log
+
+sample_data/
